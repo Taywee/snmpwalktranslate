@@ -16,6 +16,11 @@
 *.lib
 
 # Executables
+snmpwalktranslate
 *.exe
 *.out
 *.app
+
+# Swap files
+*.swp
+*.swo

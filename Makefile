@@ -1,6 +1,6 @@
 build = Release
 objects = main.o
-CXX = g++
+CXX = clang++
 
 CommonOptsAll = -Wall -Wextra -std=c++11
 CommonDebugOpts = -g -O0
