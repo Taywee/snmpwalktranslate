@@ -21,27 +21,6 @@ class OID
         friend std::istream &operator>>(std::istream &stream, OID &oid);
 };
 
-std::istream &operator>>(std::istream &stream, OID &oid)
-{
-    std::string dummy;
-    stream >> oid.stringOid;
-    stream >> dummy;
-    stream.get();
-    std::getline(stream, oid.data);
-
-    oid.length = 0;
-    for (std::string field: split(oid.stringOid, '.'))
-    {
-        if (field.length())
-        {
-            std::stringstream(field) >> oid.id[oid.length];
-            oid.length++;
-        }
-    }
-
-    return (stream);
-}
-
 int main()
 {
     init_snmp("snmpapp");
@@ -81,3 +60,25 @@ std::vector<std::string> split(const std::string &s, char delim)
     split(s, delim, elems);
     return elems;
 }
+
+std::istream &operator>>(std::istream &stream, OID &oid)
+{
+    std::string dummy;
+    stream >> oid.stringOid;
+    stream >> dummy;
+    stream.get();
+    std::getline(stream, oid.data);
+
+    oid.length = 0;
+    for (std::string field: split(oid.stringOid, '.'))
+    {
+        if (field.length())
+        {
+            std::stringstream(field) >> oid.id[oid.length];
+            ++oid.length;
+        }
+    }
+
+    return (stream);
+}
+
