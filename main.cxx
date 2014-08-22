@@ -14,8 +14,7 @@ class OID
 {
     public:
         std::string stringOid;
-        oid id[MAX_OID_LEN];
-        size_t length;
+        std::vector<oid> id;
         std::string data;
 
         friend std::istream &operator>>(std::istream &stream, OID &oid);
@@ -34,7 +33,7 @@ int main()
         }
         std::vector<char> oidstring;
         oidstring.resize(256, '\0');
-        snprint_objid(oidstring.data(), oidstring.size(), oid.id, oid.length);
+        snprint_objid(oidstring.data(), oidstring.size(), oid.id.data(), oid.id.size());
         std::cout << oidstring.data() << " = " << oid.data << '\n';
     }
     std::cout << std::flush;
@@ -69,13 +68,14 @@ std::istream &operator>>(std::istream &stream, OID &oid)
     stream.get();
     std::getline(stream, oid.data);
 
-    oid.length = 0;
+    oid.id.clear();
     for (std::string field: split(oid.stringOid, '.'))
     {
         if (field.length())
         {
-            std::stringstream(field) >> oid.id[oid.length];
-            ++oid.length;
+            ::oid temp;
+            std::stringstream(field) >> temp;
+            oid.id.push_back(temp);
         }
     }
 
