@@ -4,7 +4,7 @@ CXX = clang++
 
 CommonOptsAll = -Wall -Wextra -std=c++11
 CommonDebugOpts = -g -O0
-CommonReleaseOpts = -s -O2
+CommonReleaseOpts = -s -O3
 CommonOpts = $(CommonOptsAll) $(Common$(build)Opts)
 
 CompileOptsAll = -c

@@ -24,3 +24,4 @@ snmpwalktranslate
 # Swap files
 *.swp
 *.swo
+*.pyc
