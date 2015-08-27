@@ -1,29 +1,24 @@
-build = Release
-objects = main.o
-CXX = clang++
+CC=gcc
+CXX=g++
+DEFINES=
+CFLAGS=-c -O2 -std=c++11
+LDFLAGS=-s -std=c++11 -lnetsnmp
+SOURCES=main.cxx
+OBJECTS=$(SOURCES:.cxx=.o)
+DEPENDENCIES=$(SOURCES:.cxx=.d)
+EXECUTABLE=snmpwalktranslate
 
-CommonOptsAll = -Wall -Wextra -std=c++11
-CommonDebugOpts = -g -O0
-CommonReleaseOpts = -s -O3
-CommonOpts = $(CommonOptsAll) $(Common$(build)Opts)
+.PHONY: all clean
 
-CompileOptsAll = -c
-CompileOptsRelease =  
-CompileOptsDebug =
-CompileOpts = $(CommonOpts) $(CompileOptsAll) $(CompileOpts$(build))
+all: $(EXECUTABLE)
 
-LinkerOptsAll = -lnetsnmp
-LinkerOptsRelease = 
-LinkerOptsDebug = 
-LinkerOpts = $(CommonOpts) $(LinkerOptsAll) $(LinkerOpts$(build))
+-include $(DEPENDENCIES)
 
-.PHONY: clean
-
-snmpwalktranslate : $(objects)
-	$(CXX) -o ./snmpwalktranslate $(objects) $(LinkerOpts)
+$(EXECUTABLE): $(OBJECTS)
+	$(CXX) $(LDFLAGS) $(OBJECTS) -o $@
 
 clean :
-	-rm snmpwalktranslate $(objects)
+	rm $(EXECUTABLE) $(OBJECTS) $(DEPENDENCIES)
 
-main.o : main.cxx
-	$(CXX) -o main.o ./main.cxx $(CompileOpts)
+%.o: %.cxx
+	$(CXX) $(CFLAGS) $(DEFINES) $< -o $@
