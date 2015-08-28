@@ -1,14 +1,27 @@
 #include <iostream>
 #include <vector>
+#include <list>
 #include <sstream>
 
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
 
-
-// Split string into vector of strings based on single-character delimiter
-std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
-std::vector<std::string> split(const std::string &s, char delim);
+// split a string into an output iterator of some sort.
+template <typename OutputIterator>
+void split(const std::string &source, const std::string &delimiter, OutputIterator result)
+{
+    size_t prevposition = 0;
+    size_t position = 0;
+    while ((position < source.size()) && ((position = source.find(delimiter, position)) != source.npos))
+    {
+        *result = source.substr(prevposition, position - prevposition);
+        result++;
+        position += delimiter.size();
+        prevposition = position;
+    }
+    *result = source.substr(prevposition);
+    result++;
+}
 
 class OID
 {
@@ -32,33 +45,14 @@ int main()
             break;
         }
         std::vector<char> oidstring;
-        oidstring.resize(256, '\0');
+        oidstring.resize(2024, '\0');
         snprint_objid(oidstring.data(), oidstring.size(), oid.id.data(), oid.id.size());
         std::cout << oidstring.data() << " = " << oid.data << '\n';
     }
-    std::cout << std::flush;
 
     return (0);
 }
 
-
-std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems)
-{
-    std::stringstream ss(s);
-    std::string item;
-    while (std::getline(ss, item, delim))
-    {
-        elems.push_back(item);
-    }
-    return elems;
-}
-
-std::vector<std::string> split(const std::string &s, char delim)
-{
-    std::vector<std::string> elems;
-    split(s, delim, elems);
-    return elems;
-}
 
 std::istream &operator>>(std::istream &stream, OID &oid)
 {
@@ -69,14 +63,17 @@ std::istream &operator>>(std::istream &stream, OID &oid)
     std::getline(stream, oid.data);
 
     oid.id.clear();
-    for (std::string field: split(oid.stringOid, '.'))
+    std::list<std::string> splitOid;
+    split(oid.stringOid, ".", std::back_inserter(splitOid));
+
+    // Remove the first blank field, caused by the leading dot
+    splitOid.pop_front();
+
+    for (const std::string &field: splitOid)
     {
-        if (field.length())
-        {
-            ::oid temp;
-            std::stringstream(field) >> temp;
-            oid.id.push_back(temp);
-        }
+        ::oid temp;
+        std::stringstream(field) >> temp;
+        oid.id.push_back(temp);
     }
 
     return (stream);
