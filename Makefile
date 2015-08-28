@@ -1,7 +1,7 @@
 CC=gcc
 CXX=g++
 DEFINES=
-CFLAGS=-c -O2 -std=c++11
+CFLAGS=-c -O2 -std=c++11 -MMD
 LDFLAGS=-s -std=c++11 -lnetsnmp
 SOURCES=main.cxx
 OBJECTS=$(SOURCES:.cxx=.o)
