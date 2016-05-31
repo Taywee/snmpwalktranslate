@@ -23,15 +23,14 @@ void split(const std::string &source, const std::string &delimiter, OutputIterat
     result++;
 }
 
-class OID
+struct OID
 {
-    public:
-        std::string stringOid;
-        std::vector<oid> id;
-        std::string data;
-
-        friend std::istream &operator>>(std::istream &stream, OID &oid);
+    std::string stringOid;
+    std::vector<oid> id;
+    std::string data;
 };
+
+static std::istream &operator>>(std::istream &stream, OID &oid);
 
 int main()
 {
