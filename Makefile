@@ -1,5 +1,5 @@
-CC=gcc
-CXX=g++
+CC=cc
+CXX=c++
 DEFINES=
 CFLAGS=-c -O2 -std=c++11 -MMD
 LDFLAGS=-s -std=c++11 -lnetsnmp
